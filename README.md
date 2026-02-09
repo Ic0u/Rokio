@@ -1,8 +1,8 @@
 # Rokio
 
-![Rokio Banner](static/rokio_banner.png)
-
 <div align="center">
+
+<img src="static/AppIcon.png" alt="Rokio Logo" width="128" height="128" />
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tauri](https://img.shields.io/badge/Tauri-2.0-orange?logo=tauri)](https://tauri.app)
@@ -18,6 +18,10 @@ The next-generation Roblox account manager built for power users.
 </div>
 
 ---
+
+## Preview
+
+![Rokio Server Browser](static/server_browser_preview.png)
 
 ## Introduction
 
