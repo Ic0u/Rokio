@@ -38,6 +38,9 @@ jobs:
         with:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
+      - name: Rust Cache
+        uses: swatinem/rust-cache@v2
+
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-24.04'
         run: |
@@ -62,11 +65,11 @@ jobs:
           releaseName: "Rokio ${{ github.event.inputs.version || github.ref_name }}"
           releaseBody: |
             ## What's New
-            
+
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
-            
+
             ## Downloads
-            
+
             | Platform | File |
             |----------|------|
             | Windows | `.msi` (recommended) or `.exe` |
