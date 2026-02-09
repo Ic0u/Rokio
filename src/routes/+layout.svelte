@@ -27,111 +27,29 @@
   // About modal
   let showAboutModal = $state(false);
   
-const changelog = [
-    { 
-      version: "1.1.0", 
-      date: "Feb 2026", 
-      highlight: true, 
-      changes: [
-        "Refactored codebase for maintainability",
-        "Optimized cross-platform linking (sold/mold/lld)",
-        "Removed redundant Game Tab",
-        "Implemented native CPU optimization",
-        "Redesigned Settings with sandboxing"
-      ]
-    },
-    { 
-      version: "1.0.0", 
-      date: "Feb 2026", 
-      highlight: false, 
-      changes: [
-        "Initial public release",
-        "Added cross-platform support (macOS, Win, Linux)",
-        "Integrated encrypted security vault",
-        "Enabled multi-instance launching",
-        "Added server browser and region info",
-        "Introduced dynamic themes"
-      ]
-    },
-    { 
-      version: "0.9.0", 
-      date: "Jan 2026", 
-      highlight: false, 
-      changes: [
-        "Public Beta release",
-        "Added cookie-based account import",
-        "Implemented Quick Login",
-        "Added Favorites system"
-      ]
-    },
-    { 
-      version: "0.7.0", 
-      date: "Jan 2026", 
-      highlight: false, 
-      changes: [
-        "Alpha: Stability improvements",
-        "Fixed memory leaks in rendering",
-        "Optimized asset caching",
-        "Standardized UI components"
-      ]
-    },
-    { 
-      version: "0.6.0", 
-      date: "Dec 2025", 
-      highlight: false, 
-      changes: [
-        "Alpha: Networking overhaul",
-        "Improved connection latency",
-        "Added background auto-updater",
-        "Refactored state management"
-      ]
-    },
-    { 
-      version: "0.5.0", 
-      date: "Dec 2025", 
-      highlight: false, 
-      changes: [
-        "Alpha: Account systems",
-        "Implemented basic authentication",
-        "Added session persistence",
-        "Created profile management UI"
-      ]
-    },
-    { 
-      version: "0.4.0", 
-      date: "Dec 2025", 
-      highlight: false, 
-      changes: [
-        "Alpha: Core launching logic",
-        "Implemented process injection",
-        "Added JVM argument parsing",
-        "Basic file integrity checks"
-      ]
-    },
-    { 
-      version: "0.3.0", 
-      date: "Nov 2025", 
-      highlight: false, 
-      changes: [
-        "Alpha: UI prototyping",
-        "Established navigation structure",
-        "Created minimalist dark theme base",
-        "Integrated custom font engine"
-      ]
-    },
-    { 
-      version: "0.2.0", 
-      date: "Nov 2025", 
-      highlight: false, 
-      changes: [
-        "Alpha: Backend architecture",
-        "Set up IPC communication layer",
-        "Configured build pipeline",
-        "Implemented logger service"
-      ]
-    },
-    {
-
+  const changelog = [
+    { version: "1.1.0", date: "Feb 2026", highlight: true, changes: [
+      "Refactored codebase for better maintainability",
+      "Cross-platform linker optimization (sold/mold/lld)",
+      "Removed Game Tab in Serverlist",
+      "Native CPU optimization for all platforms",
+      "Redesign Settings Tab with sandboxed feature and polish"
+    ]},
+    { version: "1.0.0", date: "Feb 2026", highlight: false, changes: [
+      "Initial public release",
+      "Cross-platform support (macOS, Windows, Linux)",
+      "Encrypted vault for account security",
+      "Multi-instance launching",
+      "Server browser with region info",
+      "Dynamic themes with accent colors"
+    ]},
+    { version: "0.9.0", date: "Jan 2026", highlight: false, changes: [
+      "Beta release",
+      "Cookie-based account import",
+      "Quick login feature",
+      "Favorite games system"
+    ]}
+  ];
 
   let settings = $state<AppSettings>({
     autoLockTimeout: "never",
