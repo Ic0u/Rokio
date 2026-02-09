@@ -1,0 +1,85 @@
+[package]
+name = "rokio"
+version = "0.1.0"
+description = "ROKIO - Roblox Alt Manager"
+authors = ["ROKIO Team"]
+edition = "2021"
+
+[lib]
+name = "rokio_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# Tauri Core
+tauri = { version = "2", features = ["macos-private-api", "image-png"] }
+tauri-plugin-opener = "2"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Async Runtime
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
+
+# HTTP Client (for Roblox API)
+reqwest = { version = "0.12", features = ["json", "blocking"] }
+
+# Cryptography (AES-256-GCM + PBKDF2)
+aes-gcm = "0.10"
+pbkdf2 = "0.12"
+sha2 = "0.10"
+rand = "0.8"
+base64 = "0.22"
+
+# Utilities
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+log = "0.4"
+urlencoding = "2"
+rusqlite = { version = "0.32", features = ["bundled"] }
+dirs = "5"  # Cross-platform home directory detection
+
+# Platform-specific for hardware ID
+[target.'cfg(target_os = "macos")'.dependencies]
+mac_address2 = "1"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+winreg = "0.55"
+
+# Windows API for process/mutex manipulation
+windows-sys = { version = "0.59", features = [
+    "Win32_Foundation",
+    "Win32_System_Threading",
+    "Win32_System_ProcessStatus",
+    "Win32_System_Diagnostics_ToolHelp",
+    "Win32_Security",
+    "Win32_System_SystemServices",
+] }
+
+# ============================================================================
+# RELEASE OPTIMIZATIONS (Production: smallest binary)
+# ============================================================================
+[profile.release]
+lto = true           # Link-time optimization (slower compile, faster/smaller binary)
+codegen-units = 1    # Single codegen unit for better optimization
+panic = "abort"      # Don't include unwinding code (smaller binary)
+strip = true         # Strip debug symbols
+opt-level = "z"      # Optimize for size
+
+# ============================================================================
+# DEV OPTIMIZATIONS (Fast incremental builds - CMake-like speed)
+# Reference: https://benw.is/posts/how-i-improved-my-rust-compile-times-by-seventy-five-percent
+# ============================================================================
+[profile.dev]
+incremental = true   # Enable incremental compilation (huge speed boost)
+opt-level = 1        # Slight optimization for own code
+debug = 2            # Full debug info for debugging
+
+# CRITICAL: Optimize dependencies heavily (they rarely change, so worth the upfront cost)
+# This makes incremental builds MUCH faster as deps are pre-optimized
+[profile.dev.package."*"]
+opt-level = 3        # Full optimization for dependencies (per benw.is: 75% faster incremental)
+debug = false        # No debug info for dependencies (faster linking)

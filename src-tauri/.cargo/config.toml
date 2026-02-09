@@ -1,0 +1,39 @@
+# ============================================================================
+# CARGO CONFIG - Cross-Platform Build Optimization
+# ============================================================================
+# For local dev: Fast incremental builds with system linker
+# For CI/Release: Baseline CPU targets for maximum compatibility
+# ============================================================================
+
+[build]
+jobs = 8
+
+# ============================================================================
+# macOS Intel - Baseline x86-64 for compatibility
+# ============================================================================
+[target.x86_64-apple-darwin]
+# No rustflags = Uses baseline instruction set (compatible with all Intel Macs)
+
+# ============================================================================
+# macOS Apple Silicon (M1/M2/M3)
+# ============================================================================
+[target.aarch64-apple-darwin]
+# No rustflags = Uses baseline ARM64 (compatible with all Apple Silicon)
+
+# ============================================================================
+# Windows x64 - Baseline x86-64 for compatibility
+# ============================================================================
+[target.x86_64-pc-windows-msvc]
+# No custom linker for CI compatibility (rust-lld not always available)
+
+# ============================================================================
+# Linux x64 - Baseline x86-64 for compatibility
+# ============================================================================
+[target.x86_64-unknown-linux-gnu]
+# No mold linker requirement for CI (uses default ld)
+
+# ============================================================================
+# Environment Variables
+# ============================================================================
+[env]
+MACOSX_DEPLOYMENT_TARGET = "10.15"

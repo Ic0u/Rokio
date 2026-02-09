@@ -1,0 +1,221 @@
+@import "tailwindcss";
+
+/* ========================================
+   ROKIO Design System - Premium Dark
+   Pixel-perfect AltGenerator Clone
+   ======================================== */
+
+:root, [data-theme="dark"] {
+  /* Backgrounds */
+  --color-bg-primary: #121212;   /* Deep dark grey, not pitch black */
+  --color-bg-secondary: #1a1a1a; /* Lighter grey for cards/rows */
+  --color-bg-tertiary: #252525;  /* Hover states */
+  --color-bg-elevated: #2a2a2a;  /* Modals/Dropdowns */
+
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1aa; /* Zinc-400 */
+  --color-text-tertiary: #71717a;  /* Zinc-500 */
+
+  /* Accent - Brand Red */
+  --color-accent: #ff4d4d;
+  --color-accent-hover: #ff3333;
+  --color-accent-dim: rgba(255, 77, 77, 0.1);
+
+  /* Semantic */
+  --color-success: #2ecc71;
+  --color-warning: #f1c40f;
+  --color-error: #e74c3c;
+  --color-info: #3b82f6;
+
+  /* Borders */
+  --color-border: #333333;
+  --color-border-hover: #444444;
+  --color-separator: #2a2a2a;
+  
+  /* Scrollbar */
+  --scrollbar-thumb: #333;
+  --scrollbar-thumb-hover: #444;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  /* Backgrounds - Clean white/gray */
+  --color-bg-primary: #f5f5f7;   /* Apple-style light gray */
+  --color-bg-secondary: #ffffff; /* Pure white for cards */
+  --color-bg-tertiary: #e5e5ea;  /* Hover states */
+  --color-bg-elevated: #ffffff;  /* Modals/Dropdowns */
+
+  /* Text */
+  --color-text-primary: #1d1d1f;   /* Near black */
+  --color-text-secondary: #6e6e73; /* Gray */
+  --color-text-tertiary: #8e8e93;  /* Lighter gray */
+
+  /* Accent - Brand Red (same) */
+  --color-accent: #ff4d4d;
+  --color-accent-hover: #ff3333;
+  --color-accent-dim: rgba(255, 77, 77, 0.08);
+
+  /* Semantic */
+  --color-success: #28a745;
+  --color-warning: #f0ad4e;
+  --color-error: #dc3545;
+  --color-info: #3b82f6;
+
+  /* Borders */
+  --color-border: #d1d1d6;
+  --color-border-hover: #c7c7cc;
+  --color-separator: #e5e5ea;
+  
+  /* Scrollbar */
+  --scrollbar-thumb: #c1c1c6;
+  --scrollbar-thumb-hover: #a1a1a6;
+}
+
+/* ========================================
+   Global Reset
+   ======================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px; /* Smaller, dense font */
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ========================================
+   Scrollbar - Theme Aware
+   ======================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+  border: 2px solid var(--color-bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ========================================
+   Window Drag
+   ======================================== */
+[data-tauri-drag-region] {
+  -webkit-app-region: drag;
+}
+
+[data-tauri-drag-region] button,
+[data-tauri-drag-region] a,
+[data-tauri-drag-region] input,
+[data-tauri-drag-region] nav,
+[data-tauri-drag-region] .no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* ========================================
+   Utilities
+   ======================================== */
+.glass {
+  background: var(--color-bg-primary); /* Remove glass, use solid for sharpness */
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ========================================
+   Premium Animations & Interactions
+   ======================================== */
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, transform, opacity, box-shadow;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button press */
+button:active {
+  transform: scale(0.95);
+}
+
+/* Hover lift */
+.account-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Focus states */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinner { animation: spin 1s linear infinite; }
+.fade-in { animation: fadeIn 0.3s ease-out; }
+
+/* Focus ring - red accent */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   View Transitions - Circular Theme Reveal
+   ======================================== */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+  animation: circularReveal 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes circularReveal {
+  from {
+    clip-path: circle(0px at var(--transition-x, 50%) var(--transition-y, 50%));
+  }
+  to {
+    clip-path: circle(var(--transition-radius, 150%) at var(--transition-x, 50%) var(--transition-y, 50%));
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
