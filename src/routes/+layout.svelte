@@ -194,7 +194,7 @@
 {:else}
   <div class="app">
     <!-- Minimal Top Bar -->
-    <header class="topbar" data-tauri-drag-region>
+    <header class="topbar glass" data-tauri-drag-region>
       <div class="topbar-left">
         <img src="/AppIcon.png" alt="ROKIO" class="app-icon" />
         <div class="app-info">
