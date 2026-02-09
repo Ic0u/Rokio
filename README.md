@@ -1,6 +1,6 @@
 # Rokio
 
-![Rokio Banner](https://socialify.git.ci/Ic0u/Rokio/image?description=1&descriptionEditable=The%20Ultimate%20Roblox%20Account%20Manager%20%26%20Multi-Instance%20Launcher&font=Inter&language=1&name=1&owner=1&pattern=Circuit%20Board&theme=Dark)
+![Rokio Banner](static/rokio_banner.png)
 
 <div align="center">
 
@@ -19,23 +19,23 @@ The next-generation Roblox account manager built for power users.
 
 ---
 
-## 📖 Introduction
+## Introduction
 
 **Rokio** is a high-performance cross-platform application designed to manage multiple Roblox accounts and launch instances simultaneously. Built with **Tauri 2.0** and **Rust**, it offers native performance with a minimal memory footprint, while the **SvelteKit** frontend provides a modern, responsive user interface.
 
 Unlike traditional managers, Rokio leverages native OS APIs for secure credential storage (Keychain/DPAPI) and uses isolated processes for multi-instance support without modifying game files.
 
-## ✨ Key Features
+## Key Features
 
-- **🔐 Secure Vault**: AES-256-GCM encryption for all stored cookies and credentials.
-- **🚀 Multi-Instance**: Launch unlimited Roblox clients simultaneously with unique contexts.
-- **⚡ Native Performance**: <50MB RAM usage when idle, powered by Rust.
-- **🌍 Cross-Platform**: First-class support for Windows, macOS, and Linux.
-- **🎨 Modern UI**: Beautiful, dark-themed interface with drag-and-drop organization.
-- **📡 Server Browser**: Built-in server browser with region detection and ping stats.
-- **🔄 Auto-Refresh**: Automatic cookie validation and renewal.
+- **Secure Vault**: AES-256-GCM encryption for all stored cookies and credentials.
+- **Multi-Instance**: Launch unlimited Roblox clients simultaneously with unique contexts.
+- **Native Performance**: <50MB RAM usage when idle, powered by Rust.
+- **Cross-Platform**: First-class support for Windows, macOS, and Linux.
+- **Modern UI**: Beautiful, dark-themed interface with drag-and-drop organization.
+- **Server Browser**: Built-in server browser with region detection and ping stats.
+- **Auto-Refresh**: Automatic cookie validation and renewal.
 
-## 🏗️ Architecture
+## Architecture
 
 Rokio follows a hybrid architecture combining a native Rust backend with a web-based frontend context.
 
@@ -77,7 +77,7 @@ graph TD
 - **Database**: SQLite (local metadata) + System Keychain (secrets)
 - **Communication**: Asynchronous IPC based on Tauri Invoke/Event system
 
-## 🛠️ Installation
+## Installation
 
 ### Prerequisites
 - **Windows**: WebView2 (usually pre-installed on Windows 10/11)
@@ -89,11 +89,11 @@ Download the latest binary for your platform from the [Releases](https://github.
 
 | Platform | Installer Type | Recommended |
 |----------|---------------|-------------|
-| Windows  | `.msi`        | ✅ Yes       |
-| macOS    | `.dmg`        | ✅ Yes       |
-| Linux    | `.deb`        | ✅ Yes       |
+| Windows  | `.msi`        | Yes         |
+| macOS    | `.dmg`        | Yes         |
+| Linux    | `.deb`        | Yes         |
 
-## 💻 Development
+## Development
 
 ### 1. Prerequisites
 Ensure you have the following installed:
@@ -125,7 +125,7 @@ PUBLIC_API_ENDPOINT=https://api.roblox.com
 Example_KEY=your_key_here
 ```
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 Rokio/
@@ -143,7 +143,7 @@ Rokio/
 └── static/             # Static assets (images, fonts)
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please follow these steps:
 
@@ -160,11 +160,11 @@ npm run lint
 cargo fmt
 ```
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [x] Core Account Management
 - [x] Secure Vault Implementation
@@ -177,7 +177,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-Built with ❤️ by **Nam Nguyễn**
+Built with by **Nam Nguyễn**
 
 [Report Bug](https://github.com/Ic0u/Rokio/issues) • [Request Feature](https://github.com/Ic0u/Rokio/issues)
 
