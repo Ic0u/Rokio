@@ -10,6 +10,28 @@
   let filterMode = $state<"all" | "favorites" | "online">("all");
   let sortMode = $state<"name" | "created" | "lastUsed" | "favorite">("name");
   let sortAsc = $state(true);
+  let selectedIds = $state<Set<string>>(new Set());
+
+  let allSelected = $derived(
+    filteredAccounts().length > 0 && 
+    filteredAccounts().every(a => selectedIds.has(a.id))
+  );
+
+  function toggleSelectAll() {
+    const visible = filteredAccounts();
+    if (allSelected) {
+      selectedIds = new Set();
+    } else {
+      selectedIds = new Set(visible.map(a => a.id));
+    }
+  }
+
+  function toggleSelect(id: string) {
+    const next = new Set(selectedIds);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    selectedIds = next;
+  }
 
   onMount(() => {
     accounts.load();
@@ -185,7 +207,7 @@
       <div class="accounts-table">
         <div class="thead-row">
           <div class="th center">
-            <input type="checkbox" disabled />
+            <input type="checkbox" checked={allSelected} onchange={toggleSelectAll} />
           </div>
           <div class="th">Account</div>
           <div class="th">Alias</div>
@@ -198,7 +220,8 @@
           {#each filteredAccounts() as account (account.id)}
             <AccountRow 
               {account} 
-              isSelected={$accounts.selectedId === account.id} 
+              isSelected={selectedIds.has(account.id)}
+              onToggleSelect={() => toggleSelect(account.id)}
             />
           {/each}
         </div>

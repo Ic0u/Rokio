@@ -433,6 +433,50 @@ use crate::profiles::Profile;
 use crate::settings::AppSettings;
 use std::path::PathBuf;
 
+/// Inject cookie into the SYSTEM Roblox cookie paths (real ~/Library/)
+/// so that single-instance launch uses the correct account.
+fn inject_system_cookie(cookie_value: &str) -> Result<(), String> {
+    use crate::binarycookies::{BinaryCookies, Cookie as BinaryCookie, Page};
+    use std::fs::{self, File};
+    use std::io::Write;
+    use std::time::{Duration, SystemTime};
+
+    let home = dirs::home_dir().ok_or("Cannot determine home directory")?;
+
+    let cookie = BinaryCookie {
+        domain: ".roblox.com".into(),
+        name: ".ROBLOSECURITY".into(),
+        path: Some("/".into()),
+        value: cookie_value.to_string(),
+        secure: Some(true),
+        http_only: Some(true),
+        expiration: Some(SystemTime::now() + Duration::from_secs(60 * 60 * 24 * 30)),
+        creation: Some(SystemTime::now()),
+    };
+
+    let page = Page::new(vec![cookie]);
+    let binary_cookies = BinaryCookies::new(vec![page]);
+    let bytes = binary_cookies.build();
+
+    // Write to ~/Library/HTTPStorages/
+    let http_storages = home.join("Library").join("HTTPStorages");
+    fs::create_dir_all(&http_storages).map_err(|e| e.to_string())?;
+    let f1 = http_storages.join("com.roblox.RobloxPlayer.binarycookies");
+    File::create(&f1)
+        .and_then(|mut f| f.write_all(&bytes))
+        .map_err(|e| format!("Failed to write system cookie (HTTPStorages): {}", e))?;
+
+    // Write to ~/Library/Cookies/
+    let cookies_dir = home.join("Library").join("Cookies");
+    fs::create_dir_all(&cookies_dir).map_err(|e| e.to_string())?;
+    let f2 = cookies_dir.join("com.roblox.RobloxPlayer.binarycookies");
+    File::create(&f2)
+        .and_then(|mut f| f.write_all(&bytes))
+        .map_err(|e| format!("Failed to write system cookie (Cookies): {}", e))?;
+
+    Ok(())
+}
+
 /// Shared launch preparation: unlock vault, load accounts, get settings & timestamps
 struct LaunchContext {
     account: Profile,
@@ -551,6 +595,8 @@ pub async fn launch_game(
             setup_multi_instance_env(&app_handle, &account_id, &ctx.account.cookie)?;
         launch_with_custom_home(&home_dir, place_id, job_id.as_deref())?
     } else {
+        // Inject cookie into system Roblox paths so the correct account is used
+        inject_system_cookie(&ctx.account.cookie)?;
         launch_roblox_deeplink(place_id, job_id.as_deref())?
     };
 
@@ -609,9 +655,11 @@ pub async fn launch_vip_server(
 
     let vip_link = build_vip_deep_link(place_id, &link_code);
 
-    // Set up multi-instance environment if enabled (but VIP always launches via deeplink)
+    // Set up multi-instance environment if enabled, otherwise inject system cookie
     if ctx.settings.multi_instance {
         let _ = setup_multi_instance_env(&app_handle, &account_id, &ctx.account.cookie)?;
+    } else {
+        inject_system_cookie(&ctx.account.cookie)?;
     }
 
     // Launch via platform-specific deeplink

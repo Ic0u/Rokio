@@ -3,7 +3,7 @@
   import { accounts, launcher, ui } from "$lib/stores";
   import type { Profile } from "$lib/types";
 
-  let { account, isSelected = false }: { account: Profile; isSelected?: boolean } = $props();
+  let { account, isSelected = false, onToggleSelect = () => {} }: { account: Profile; isSelected?: boolean; onToggleSelect?: () => void } = $props();
 
   let isRunning = $derived($launcher.instances.some(i => i.accountId === account.id));
   let instance = $derived($launcher.instances.find(i => i.accountId === account.id));
@@ -20,7 +20,7 @@
   });
 
   function toggleSelection(e: Event) {
-    accounts.select(isSelected ? null : account.id);
+    onToggleSelect();
   }
 
   function toggleFavorite(e: MouseEvent) {
