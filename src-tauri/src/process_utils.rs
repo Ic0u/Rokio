@@ -209,13 +209,11 @@ pub mod unix {
     use std::process::Command;
 
     #[derive(Debug, Clone)]
-    #[allow(dead_code)]
     pub struct ProcessInfo {
         pub pid: u32,
         pub name: String,
     }
 
-    #[allow(dead_code)]
     pub fn find_roblox_processes() -> Result<Vec<ProcessInfo>, String> {
         // Simple pgrep implementation
         let output = Command::new("pgrep")
@@ -239,7 +237,6 @@ pub mod unix {
         Ok(processes)
     }
 
-    #[allow(dead_code)]
     pub fn bypass_singleton_mutex() -> Result<u32, String> {
         // Not needed on macOS/Linux as they don't use named mutexes like Windows
         Ok(0)

@@ -97,26 +97,4 @@ split-debuginfo = "unpacked"  # macOS: faster linking (25-40% improvement)
 opt-level = 2        # Good balance (3 can be overkill for dev)
 debug = false        # No debug info for dependencies (faster linking)
 
-# ============================================================================
-# PLATFORM-SPECIFIC OPTIMIZATIONS
-# ============================================================================
-
-# macOS: Fast native linker (your platform)
-[target.x86_64-apple-darwin]
-rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/ld"]
-
-[target.aarch64-apple-darwin]
-rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/ld"]
-
-# Windows: Use LLD linker (faster than MSVC link.exe)
-[target.x86_64-pc-windows-msvc]
-rustflags = ["-C", "link-arg=/INCREMENTAL:NO", "-C", "target-feature=+crt-static"]
-
-# Linux x64: LLD linker (faster in CI)
-[target.x86_64-unknown-linux-gnu]
-rustflags = ["-C", "link-arg=-fuse-ld=lld"]
-
-# Linux ARM64: LLD linker (ubuntu-24.04-arm runner)
-[target.aarch64-unknown-linux-gnu]
-rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 

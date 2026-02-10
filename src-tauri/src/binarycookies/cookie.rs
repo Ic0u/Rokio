@@ -14,7 +14,6 @@ pub struct Cookie {
 }
 
 impl Cookie {
-    #[allow(dead_code)]
     pub fn new(
         domain: String,
         name: String,

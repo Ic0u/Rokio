@@ -8,7 +8,6 @@ pub fn to_cocoa_timestamp(time: SystemTime) -> f64 {
     }
 }
 
-#[allow(dead_code)]
 pub fn from_cocoa_timestamp(timestamp: f64) -> SystemTime {
     use std::time::Duration;
     SystemTime::UNIX_EPOCH + Duration::from_secs((timestamp as u64) + 978307200)

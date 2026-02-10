@@ -36,9 +36,7 @@ pub struct ThumbnailResponse {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ThumbnailData {
-    #[allow(dead_code)]
     pub target_id: i64,
-    #[allow(dead_code)]
     pub state: String,
     pub image_url: Option<String>,
 }
@@ -240,10 +238,8 @@ struct UsernamesResponse {
 #[serde(rename_all = "camelCase")]
 struct UsernamesData {
     #[serde(rename = "requestedUsername")]
-    #[allow(dead_code)]
     requested_username: Option<String>,
     #[serde(rename = "hasVerifiedBadge")]
-    #[allow(dead_code)]
     has_verified_badge: bool,
     id: i64,
     name: String,
@@ -375,11 +371,8 @@ const ROBLOX_USERS_API: &str = "https://users.roblox.com/v1/users";
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GroupInfo {
-    #[allow(dead_code)]
     pub id: i64,
-    #[allow(dead_code)]
     pub name: String,
-    #[allow(dead_code)]
     pub member_count: Option<i64>,
 }
 
@@ -388,15 +381,12 @@ pub struct GroupInfo {
 #[serde(rename_all = "camelCase")]
 pub struct GroupMembership {
     pub group: GroupInfo,
-    #[allow(dead_code)]
     pub role: Option<GroupRole>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct GroupRole {
-    #[allow(dead_code)]
     pub name: String,
-    #[allow(dead_code)]
     pub rank: i32,
 }
 
@@ -416,9 +406,7 @@ pub struct RobuxResponse {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UserProfileResponse {
-    #[allow(dead_code)]
     pub id: i64,
-    #[allow(dead_code)]
     pub name: String,
     pub display_name: String,
     pub created: String,

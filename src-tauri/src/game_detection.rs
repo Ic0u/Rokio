@@ -25,7 +25,6 @@ struct GameDetailsResponse {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct GameDetail {
-    #[allow(dead_code)]
     id: u64,
     root_place_id: u64,
     name: String,

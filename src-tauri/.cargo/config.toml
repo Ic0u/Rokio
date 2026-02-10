@@ -9,28 +9,34 @@
 jobs = 8
 
 # ============================================================================
-# macOS Intel - Baseline x86-64 for compatibility
+# macOS Intel - Use native linker for faster linking
 # ============================================================================
 [target.x86_64-apple-darwin]
-# No rustflags = Uses baseline instruction set (compatible with all Intel Macs)
+rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/ld"]
 
 # ============================================================================
-# macOS Apple Silicon (M1/M2/M3)
+# macOS Apple Silicon (M1/M2/M3) - Use native linker
 # ============================================================================
 [target.aarch64-apple-darwin]
-# No rustflags = Uses baseline ARM64 (compatible with all Apple Silicon)
+rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/ld"]
 
 # ============================================================================
-# Windows x64 - Baseline x86-64 for compatibility
+# Windows x64 - Static CRT for standalone binary
 # ============================================================================
 [target.x86_64-pc-windows-msvc]
-# No custom linker for CI compatibility (rust-lld not always available)
+rustflags = ["-C", "link-arg=/INCREMENTAL:NO", "-C", "target-feature=+crt-static"]
 
 # ============================================================================
-# Linux x64 - Baseline x86-64 for compatibility
+# Linux x64 - LLD linker (faster in CI)
 # ============================================================================
 [target.x86_64-unknown-linux-gnu]
-# No mold linker requirement for CI (uses default ld)
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+# ============================================================================
+# Linux ARM64 - LLD linker (ubuntu-24.04-arm runner)
+# ============================================================================
+[target.aarch64-unknown-linux-gnu]
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 
 # ============================================================================
 # Environment Variables

@@ -6,7 +6,6 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 
 /// State to track browser login session
-#[allow(dead_code)]
 pub struct BrowserLoginState {
     pub cookie: Arc<Mutex<Option<String>>>,
     pub completed: Arc<Mutex<bool>>,

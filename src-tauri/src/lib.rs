@@ -4,8 +4,6 @@
 // Module declarations
 mod binarycookies;
 mod browser_login;
-mod client;
-mod cookies;
 mod crypto;
 mod environment;
 mod game_detection;
@@ -18,7 +16,6 @@ mod roblox;
 mod settings;
 mod utils;
 mod vault;
-mod watcher;
 
 use crypto::CryptoState;
 use launcher::LauncherState;

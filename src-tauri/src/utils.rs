@@ -4,7 +4,7 @@
 use rand::Rng;
 
 /// List of common user agents for rotation
-#[allow(dead_code)]
+
 const USER_AGENTS: &[&str] = &[
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
@@ -14,7 +14,7 @@ const USER_AGENTS: &[&str] = &[
 ];
 
 /// Get a random user agent string
-#[allow(dead_code)]
+
 pub fn get_random_user_agent() -> &'static str {
     let mut rng = rand::thread_rng();
     let idx = rng.gen_range(0..USER_AGENTS.len());
@@ -27,7 +27,7 @@ pub fn get_random_user_agent() -> &'static str {
 /// - https://roblox.com/games/123456789
 /// - roblox://placeId=123456789
 /// - 123456789 (raw ID)
-#[allow(dead_code)]
+
 pub fn extract_place_id_from_url(url: &str) -> Option<u64> {
     let url = url.trim();
 
@@ -66,7 +66,7 @@ pub fn extract_place_id_from_url(url: &str) -> Option<u64> {
 
 /// Extract Job ID from a Roblox deep link
 /// roblox://placeId=123&gameInstanceId=abc-def-ghi
-#[allow(dead_code)]
+
 pub fn extract_job_id_from_url(url: &str) -> Option<String> {
     if let Some(start) = url.find("gameInstanceId=") {
         let after = &url[start + 15..];
