@@ -20,12 +20,30 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # macOS Universal (Apple Silicon + Intel)
           - platform: macos-latest
             args: --target universal-apple-darwin
-          - platform: ubuntu-24.04
-            args: ""
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+          # macOS Apple Silicon only
+          - platform: macos-latest
+            args: --target aarch64-apple-darwin
+            rust_targets: aarch64-apple-darwin
+
+          # macOS Intel only
+          - platform: macos-latest
+            args: --target x86_64-apple-darwin
+            rust_targets: x86_64-apple-darwin
+
+          # Windows x64
           - platform: windows-latest
             args: ""
+            rust_targets: ""
+
+          # Linux amd64
+          - platform: ubuntu-24.04
+            args: ""
+            rust_targets: ""
 
     runs-on: ${{ matrix.platform }}
 
@@ -36,10 +54,13 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-action@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.rust_targets }}
 
       - name: Rust Cache
         uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          shared-key: ${{ matrix.platform }}-${{ matrix.args }}
 
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-24.04'
@@ -60,22 +81,29 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CARGO_PROFILE: release-dist
         with:
           tagName: ${{ github.event.inputs.version || github.ref_name }}
           releaseName: "Rokio ${{ github.event.inputs.version || github.ref_name }}"
           releaseBody: |
-            ## What's New
+            ## 🚀 Rokio ${{ github.event.inputs.version || github.ref_name }}
 
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
 
-            ## Downloads
+            ## 📦 Downloads
 
-            | Platform | File |
-            |----------|------|
-            | Windows | `.msi` (recommended) or `.exe` |
-            | macOS | `.dmg` (Universal: Intel + Apple Silicon) |
-            | Linux | `.deb` (Debian/Ubuntu) or `.AppImage` |
+            | Platform | Recommended | Alternative |
+            |----------|-------------|-------------|
+            | **macOS (Universal)** | `.dmg` | `.app.tar.gz` |
+            | **macOS (Apple Silicon)** | `_aarch64.dmg` | `.app.tar.gz` |
+            | **macOS (Intel)** | `_x64.dmg` | `.app.tar.gz` |
+            | **Windows** | `_x64-setup.exe` | `.msi` |
+            | **Linux** | `.AppImage` | `.deb` |
+
+            > 💡 `.sig` files are for auto-updater verification.
+
+            ---
+            **Built with** Tauri 2.x + SvelteKit + Rust
+            **Author:** Nam Nguyễn
           releaseDraft: true
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
-          args: ${{ matrix.args }} --profile release-dist
+          args: ${{ matrix.args }}

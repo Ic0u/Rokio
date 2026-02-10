@@ -199,7 +199,7 @@
         <img src="/AppIcon.png" alt="ROKIO" class="app-icon" />
         <div class="app-info">
           <span class="app-name">Rokio Account Manager</span>
-          <span class="version">v1.1.0-alpha</span>
+          <span class="version">UI 1.1.0 beta-2a</span>
         </div>
       </div>
 

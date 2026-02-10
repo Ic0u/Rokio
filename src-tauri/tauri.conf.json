@@ -7,7 +7,8 @@
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "npm run build",
-    "frontendDist": "../build"
+    "frontendDist": "../build",
+    "removeUnusedCommands": true
   },
   "app": {
     "windows": [
@@ -35,6 +36,19 @@
     ],
     "macOS": {
       "minimumSystemVersion": "10.15"
+    },
+    "windows": {
+      "nsis": {
+        "installMode": "both"
+      }
+    },
+    "linux": {
+      "deb": {
+        "section": "utils"
+      },
+      "appimage": {
+        "bundleMediaFramework": true
+      }
     },
     "shortDescription": "Roblox Account Manager - Fast, Secure, Cross-Platform",
     "longDescription": "Rokio - The Ultimate Roblox Account Manager\n\n🔐 Security: AES-256-GCM encryption for your accounts\n⚡ Performance: Blazing fast builds with optimized Rust backend\n🌍 Cross-Platform: Windows, macOS, Linux support\n🎮 Features: Multi-instance, Server Browser, Game Favorites\n\nBuilt with Tauri 2.x + SvelteKit + Rust\n\nAuthor: Nam Nguyễn\nVersion: 1.1.0-alpha",

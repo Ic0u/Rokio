@@ -67,7 +67,8 @@ lto = true           # Link-time optimization (slower compile, faster/smaller bi
 codegen-units = 1    # Single codegen unit for better optimization
 panic = "abort"      # Don't include unwinding code (smaller binary)
 strip = true         # Strip debug symbols
-opt-level = "z"      # Optimize for size
+opt-level = "s"      # Optimize for size (Tauri docs: "s" often smaller than "z")
+overflow-checks = false  # Skip overflow checks in release (smaller binary)
 
 # ============================================================================
 # CROSS-PLATFORM DISTRIBUTION PROFILE (For GitHub Actions / CI builds)
