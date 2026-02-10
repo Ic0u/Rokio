@@ -136,8 +136,8 @@
 
   // Created date
   let createdDate = $derived(
-    account.createdAt > 0 
-      ? new Date(account.createdAt * 1000).toLocaleDateString() 
+    (account.createdAt ?? 0) > 0 
+      ? new Date((account.createdAt ?? 0) * 1000).toLocaleDateString() 
       : "Unknown"
   );
 </script>

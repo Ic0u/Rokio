@@ -53,7 +53,7 @@
         const iconMap = new Map(data.data.map((d: any) => [d.targetId, d.imageUrl]));
         games = games.map(g => ({
           ...g,
-          thumbnail: iconMap.get(g.universeId) || g.thumbnail
+          thumbnail: (iconMap.get(g.universeId) as string | undefined) || g.thumbnail
         }));
       }
     } catch (err) {

@@ -63,7 +63,7 @@
   // Quick launch on double-click (one-click switching)
   async function quickLaunch() {
     if (isRunning) return;
-    await launcher.launch(account.id, 0, 0); // Launch without specific game
+    await launcher.launch(account.id, 0); // Launch without specific game
   }
 </script>
 

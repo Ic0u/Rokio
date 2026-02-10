@@ -685,34 +685,6 @@
     color: var(--color-text-primary);
   }
 
-  /* Legacy chip styles - keeping for backwards compat */
-  .place-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .place-chip {
-    padding: 6px 12px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid var(--color-border);
-    border-radius: 20px;
-    color: var(--color-text-secondary);
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .place-chip:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--color-text-primary);
-  }
-
-  .place-chip.active {
-    background: rgba(59, 130, 246, 0.2);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
 
   /* Error */
   .error-message {
