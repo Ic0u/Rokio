@@ -70,6 +70,9 @@ pub fn load_accounts(
                 description: enc_acc.description,
                 is_favorite: enc_acc.is_favorite,
                 last_played_at: enc_acc.last_played_at,
+                password: None,
+                created_at: Some(enc_acc.created_at),
+                is_premium: None,
             })
         })
         .collect();
@@ -168,6 +171,9 @@ pub async fn add_account(
         description: String::new(),
         is_favorite: false,
         last_played_at: 0,
+        password: None,
+        created_at: Some(chrono::Utc::now().timestamp() as u64),
+        is_premium: None,
     };
 
     // Load existing accounts
@@ -307,6 +313,9 @@ pub fn import_accounts(
                 description: enc_acc.description,
                 is_favorite: enc_acc.is_favorite,
                 last_played_at: enc_acc.last_played_at,
+                password: None,
+                created_at: Some(enc_acc.created_at),
+                is_premium: None,
             })
         })
         .collect();

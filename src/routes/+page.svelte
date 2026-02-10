@@ -20,6 +20,7 @@
   function animateRows() {
     const rows = document.querySelectorAll('.account-row');
     if (rows.length > 0) {
+      // @ts-ignore - motion library typing issue
       animate(rows, 
         { opacity: [0, 1], y: [10, 0] },
         { delay: stagger(0.03), duration: 0.3, easing: "ease-out" }
@@ -362,49 +363,6 @@
 
   .btn-primary:hover {
     background: var(--color-accent-hover);
-  }
-
-  /* Secondary Button */
-  .btn-secondary {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
-    background: var(--color-bg-tertiary);
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    color: var(--color-text-secondary);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-secondary:hover {
-    background: var(--color-bg-secondary);
-    color: var(--color-text-primary);
-    border-color: var(--color-text-tertiary);
-  }
-
-  /* Danger Button */
-  .btn-danger {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
-    background: rgba(255, 69, 58, 0.15);
-    border: 1px solid rgba(255, 69, 58, 0.3);
-    border-radius: 6px;
-    color: #ff6b6b;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-danger:hover {
-    background: rgba(255, 69, 58, 0.25);
-    border-color: rgba(255, 69, 58, 0.5);
   }
 
   /* Table Container */

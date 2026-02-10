@@ -29,4 +29,13 @@ pub struct Profile {
     pub is_favorite: bool,
     /// Last played timestamp (Unix epoch)
     pub last_played_at: u64,
+    /// Optional password for the account
+    #[serde(default)]
+    pub password: Option<String>,
+    /// Account creation timestamp (Unix epoch)
+    #[serde(default)]
+    pub created_at: Option<u64>,
+    /// Premium membership status
+    #[serde(default)]
+    pub is_premium: Option<bool>,
 }

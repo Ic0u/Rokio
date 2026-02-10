@@ -439,28 +439,35 @@ use crate::process_utils::{kill_process, is_process_running};
 // TAURI COMMANDS
 // ============================================================================
 
-/// Launch a game with a specific account
-#[tauri::command]
-pub async fn launch_game(
-    app_handle: tauri::AppHandle,
-    account_id: String,
-    place_id: u64,
-    job_id: Option<String>,
-    crypto_state: tauri::State<'_, CryptoState>,
-    launcher_state: tauri::State<'_, LauncherState>,
-) -> Result<ActiveInstance, String> {
-    // Get encryption key
+use crate::profiles::Profile;
+use crate::settings::AppSettings;
+use std::path::PathBuf;
+
+/// Shared launch preparation: unlock vault, load accounts, get settings & timestamps
+struct LaunchContext {
+    account: Profile,
+    accounts: Vec<Profile>,
+    key: [u8; 32],
+    app_data_dir: PathBuf,
+    settings: AppSettings,
+    now_ms: u64,
+    now_secs: u64,
+}
+
+fn prepare_launch(
+    app_handle: &tauri::AppHandle,
+    account_id: &str,
+    crypto_state: &tauri::State<'_, CryptoState>,
+) -> Result<LaunchContext, String> {
     let key = crypto_state
         .key
         .lock()
         .unwrap()
         .ok_or("Vault is locked")?;
 
-    // Get app data dir
     let app_data_dir = app_handle.path().app_data_dir().map_err(|e| e.to_string())?;
 
-    // Load accounts and find the target
-    let mut accounts = load_accounts(&app_data_dir, &key)?;
+    let accounts = load_accounts(&app_data_dir, &key)?;
     let account = accounts
         .iter()
         .find(|a| a.id == account_id)
@@ -471,48 +478,44 @@ pub async fn launch_game(
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
         .as_millis() as u64;
-    
-    let now_secs = (now_ms / 1000) as u64;
+    let now_secs = now_ms / 1000;
 
-    // Check if multi-instance mode is enabled
     let settings = get_settings(app_handle.clone()).unwrap_or_default();
-    
-    let pid = if settings.multi_instance {
-        // Multi-instance mode: Create environment, write cookies, launch with custom HOME
-        
-        // 1. Create isolated environment for this account
-        environment::create_environment(app_handle.clone(), account_id.clone())?;
-        
-        // 2. Create and unlock keychain (required for Roblox credential storage)
-        environment::create_keychain(app_handle.clone(), account_id.clone())?;
-        environment::unlock_keychain(app_handle.clone(), account_id.clone())?;
-        
-        // 3. Write the account's cookie to HTTPStorages
-        environment::write_cookies(app_handle.clone(), account_id.clone(), account.cookie.clone())?;
-        
-        // 4. Get the custom HOME directory
-        let home_dir = environment::get_launch_home_dir(&app_handle, &account_id);
-        
-        // 5. Launch with custom HOME
-        launch_with_custom_home(&home_dir, place_id, job_id.as_deref())?
-    } else {
-        // Simple mode: Just use deep link (uses system Roblox login)
-        launch_roblox_deeplink(place_id, job_id.as_deref())?
-    };
 
-    // Update last_played_at timestamp (uses milliseconds like raptormanager)
+    Ok(LaunchContext {
+        account,
+        accounts,
+        key,
+        app_data_dir,
+        settings,
+        now_ms,
+        now_secs,
+    })
+}
+
+/// Shared launch finalization: update timestamp, save accounts, track instance
+fn finalize_launch(
+    ctx: LaunchContext,
+    pid: u32,
+    place_id: u64,
+    account_id: &str,
+    launcher_state: &tauri::State<'_, LauncherState>,
+) -> Result<ActiveInstance, String> {
+    let mut accounts = ctx.accounts;
+
+    // Update last_played_at timestamp
     if let Some(acc) = accounts.iter_mut().find(|a| a.id == account_id) {
-        acc.last_played_at = now_ms;
+        acc.last_played_at = ctx.now_ms;
     }
-    let _ = save_accounts(&app_data_dir, &key, &accounts);
+    let _ = save_accounts(&ctx.app_data_dir, &ctx.key, &accounts);
 
     // Track the instance
     let instance = ActiveInstance {
         pid,
-        account_id: account.id.clone(),
-        username: account.username.clone(),
+        account_id: ctx.account.id.clone(),
+        username: ctx.account.username.clone(),
         place_id,
-        started_at: now_secs,
+        started_at: ctx.now_secs,
     };
 
     launcher_state
@@ -522,6 +525,46 @@ pub async fn launch_game(
         .insert(pid, instance.clone());
 
     Ok(instance)
+}
+
+/// Set up multi-instance environment (keychain, cookies, custom HOME)
+fn setup_multi_instance_env(
+    app_handle: &tauri::AppHandle,
+    account_id: &str,
+    cookie: &str,
+) -> Result<std::path::PathBuf, String> {
+    environment::create_environment(app_handle.clone(), account_id.to_string())?;
+    environment::create_keychain(app_handle.clone(), account_id.to_string())?;
+    environment::unlock_keychain(app_handle.clone(), account_id.to_string())?;
+    environment::write_cookies(
+        app_handle.clone(),
+        account_id.to_string(),
+        cookie.to_string(),
+    )?;
+    Ok(environment::get_launch_home_dir(app_handle, account_id))
+}
+
+/// Launch a game with a specific account
+#[tauri::command]
+pub async fn launch_game(
+    app_handle: tauri::AppHandle,
+    account_id: String,
+    place_id: u64,
+    job_id: Option<String>,
+    crypto_state: tauri::State<'_, CryptoState>,
+    launcher_state: tauri::State<'_, LauncherState>,
+) -> Result<ActiveInstance, String> {
+    let ctx = prepare_launch(&app_handle, &account_id, &crypto_state)?;
+
+    let pid = if ctx.settings.multi_instance {
+        let home_dir =
+            setup_multi_instance_env(&app_handle, &account_id, &ctx.account.cookie)?;
+        launch_with_custom_home(&home_dir, place_id, job_id.as_deref())?
+    } else {
+        launch_roblox_deeplink(place_id, job_id.as_deref())?
+    };
+
+    finalize_launch(ctx, pid, place_id, &account_id, &launcher_state)
 }
 
 /// Kill a running Roblox instance
@@ -559,8 +602,6 @@ pub fn get_active_instances(
 /// Bypass the singleton mutex (placeholder for multi-instance)
 #[tauri::command]
 pub fn bypass_mutex() -> Result<u32, String> {
-    // Multi-instance bypass would require injecting into Roblox process
-    // For now, just return 0 to indicate no action taken
     Ok(0)
 }
 
@@ -574,54 +615,18 @@ pub async fn launch_vip_server(
     crypto_state: tauri::State<'_, CryptoState>,
     launcher_state: tauri::State<'_, LauncherState>,
 ) -> Result<ActiveInstance, String> {
-    // Get encryption key
-    let key = crypto_state
-        .key
-        .lock()
-        .unwrap()
-        .ok_or("Vault is locked")?;
+    let ctx = prepare_launch(&app_handle, &account_id, &crypto_state)?;
 
-    // Get app data dir
-    let app_data_dir = app_handle.path().app_data_dir().map_err(|e| e.to_string())?;
-
-    // Load accounts and find the target
-    let mut accounts = load_accounts(&app_data_dir, &key)?;
-    let account = accounts
-        .iter()
-        .find(|a| a.id == account_id)
-        .ok_or("Account not found")?
-        .clone();
-
-    let now_ms = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_millis() as u64;
-    
-    let now_secs = (now_ms / 1000) as u64;
-
-    // Build VIP server deeplink
     let vip_link = build_vip_deep_link(place_id, &link_code);
 
-    // Check if multi-instance mode is enabled
-    let settings = get_settings(app_handle.clone()).unwrap_or_default();
-    
+    // Set up multi-instance environment if enabled (but VIP always launches via deeplink)
+    if ctx.settings.multi_instance {
+        let _ = setup_multi_instance_env(&app_handle, &account_id, &ctx.account.cookie)?;
+    }
+
+    // Launch via platform-specific deeplink
     #[cfg(target_os = "macos")]
-    let pid = if settings.multi_instance {
-        environment::create_environment(app_handle.clone(), account_id.clone())?;
-        environment::create_keychain(app_handle.clone(), account_id.clone())?;
-        environment::unlock_keychain(app_handle.clone(), account_id.clone())?;
-        environment::write_cookies(app_handle.clone(), account_id.clone(), account.cookie.clone())?;
-        let _home_dir = environment::get_launch_home_dir(&app_handle, &account_id);
-        
-        // Launch with VIP link
-        let before_pids = find_roblox_pids();
-        Command::new("open")
-            .arg(&vip_link)
-            .spawn()
-            .map_err(|e| format!("Failed to open Roblox: {}", e))?;
-        std::thread::sleep(std::time::Duration::from_millis(1500));
-        find_new_roblox_pid(&before_pids)?
-    } else {
+    let pid = {
         let before_pids = find_roblox_pids();
         Command::new("open")
             .arg(&vip_link)
@@ -656,26 +661,6 @@ pub async fn launch_vip_server(
     #[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
     let pid: u32 = return Err("VIP server launch not supported on this platform".to_string());
 
-    // Update last_played_at
-    if let Some(acc) = accounts.iter_mut().find(|a| a.id == account_id) {
-        acc.last_played_at = now_ms;
-    }
-    let _ = save_accounts(&app_data_dir, &key, &accounts);
-
-    // Track the instance
-    let instance = ActiveInstance {
-        pid,
-        account_id: account.id.clone(),
-        username: account.username.clone(),
-        place_id,
-        started_at: now_secs,
-    };
-
-    launcher_state
-        .instances
-        .lock()
-        .unwrap()
-        .insert(pid, instance.clone());
-
-    Ok(instance)
+    finalize_launch(ctx, pid, place_id, &account_id, &launcher_state)
 }
+

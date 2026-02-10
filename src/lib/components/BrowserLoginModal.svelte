@@ -52,8 +52,8 @@
   }
 </script>
 
-<div class="modal-backdrop" onclick={close}>
-  <div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+<div class="modal-backdrop" role="presentation" onclick={close} onkeydown={(e) => e.key === 'Escape' && close()}>
+  <div class="modal" onclick={(e) => e.stopPropagation()} onkeydown={() => {}} role="dialog" aria-modal="true" tabindex="-1">
     <div class="modal-header">
       <h2><Globe size={16} /> Browser Login</h2>
       <button class="close-btn" onclick={close}>

@@ -40,6 +40,8 @@ fn init_app_check() -> AppInfo {
         "macos"
     } else if cfg!(target_os = "windows") {
         "windows"
+    } else if cfg!(target_os = "linux") {
+        "linux"
     } else {
         "unknown"
     };

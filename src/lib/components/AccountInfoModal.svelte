@@ -142,8 +142,8 @@
   );
 </script>
 
-<div class="modal-backdrop" onclick={close}>
-  <div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+<div class="modal-backdrop" role="presentation" onclick={close} onkeydown={(e) => e.key === 'Escape' && close()}>
+  <div class="modal" onclick={(e) => e.stopPropagation()} onkeydown={() => {}} role="dialog" aria-modal="true" tabindex="-1">
     <!-- Header -->
     <div class="modal-header">
       <div class="header-content">

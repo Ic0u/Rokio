@@ -70,6 +70,17 @@ strip = true         # Strip debug symbols
 opt-level = "z"      # Optimize for size
 
 # ============================================================================
+# CROSS-PLATFORM DISTRIBUTION PROFILE (For GitHub Actions / CI builds)
+# ============================================================================
+[profile.release-dist]
+inherits = "release"
+lto = "fat"          # Maximum LTO for distribution builds
+codegen-units = 1
+opt-level = "s"      # Size optimization (smaller than 'z', but faster)
+strip = true
+panic = "abort"
+
+# ============================================================================
 # DEV OPTIMIZATIONS (Fast incremental builds - CMake-like speed)
 # Reference: https://benw.is/posts/how-i-improved-my-rust-compile-times-by-seventy-five-percent
 # ============================================================================
@@ -77,9 +88,30 @@ opt-level = "z"      # Optimize for size
 incremental = true   # Enable incremental compilation (huge speed boost)
 opt-level = 1        # Slight optimization for own code
 debug = 2            # Full debug info for debugging
+split-debuginfo = "unpacked"  # macOS: faster linking (25-40% improvement)
 
 # CRITICAL: Optimize dependencies heavily (they rarely change, so worth the upfront cost)
 # This makes incremental builds MUCH faster as deps are pre-optimized
 [profile.dev.package."*"]
-opt-level = 3        # Full optimization for dependencies (per benw.is: 75% faster incremental)
+opt-level = 2        # Good balance (3 can be overkill for dev)
 debug = false        # No debug info for dependencies (faster linking)
+
+# ============================================================================
+# PLATFORM-SPECIFIC OPTIMIZATIONS
+# ============================================================================
+
+# macOS: Fast native linker (your platform)
+[target.x86_64-apple-darwin]
+rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/ld"]
+
+[target.aarch64-apple-darwin]
+rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/ld"]
+
+# Windows: Use LLD linker (faster than MSVC link.exe)
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "link-arg=/INCREMENTAL:NO", "-C", "target-feature=+crt-static"]
+
+# Linux: LLD linker (if available in CI)
+[target.x86_64-unknown-linux-gnu]
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+

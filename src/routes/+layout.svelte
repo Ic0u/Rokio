@@ -194,12 +194,12 @@
 {:else}
   <div class="app">
     <!-- Minimal Top Bar -->
-    <header class="topbar glass" data-tauri-drag-region>
+    <header class="topbar" data-tauri-drag-region>
       <div class="topbar-left">
         <img src="/AppIcon.png" alt="ROKIO" class="app-icon" />
         <div class="app-info">
           <span class="app-name">Rokio Account Manager</span>
-          <span class="version">v1.1.0-a67r</span>
+          <span class="version">v1.1.0-alpha</span>
         </div>
       </div>
 
@@ -350,30 +350,13 @@
             <div class="accent-colors-container">
               <span class="accent-colors-label">Color</span>
               <div class="accent-colors">
-                {#each [
-                  { name: 'red', color: '#ff4d4d' },
-                  { name: 'orange', color: '#ff9500' },
-                  { name: 'amber', color: '#ffb300' },
-                  { name: 'yellow', color: '#ffcc00' },
-                  { name: 'lime', color: '#a3e635' },
-                  { name: 'green', color: '#34c759' },
-                  { name: 'mint', color: '#00c7be' },
-                  { name: 'teal', color: '#5ac8fa' },
-                  { name: 'cyan', color: '#00bcd4' },
-                  { name: 'blue', color: '#007aff' },
-                  { name: 'indigo', color: '#5856d6' },
-                  { name: 'purple', color: '#af52de' },
-                  { name: 'pink', color: '#ff2d55' },
-                  { name: 'rose', color: '#f43f5e' },
-                  { name: 'brown', color: '#a18072' },
-                  { name: 'graphite', color: '#6b7280' }
-                ] as accent}
+              {#each Object.entries(accentColors) as [name, color]}
                   <button 
                     class="accent-swatch" 
-                    class:selected={settings.accentColor === accent.name}
-                    style="--swatch-color: {accent.color}"
-                    title={accent.name}
-                    onclick={() => { settings.accentColor = accent.name; saveSettings(); }}
+                    class:selected={settings.accentColor === name}
+                    style="--swatch-color: {color}"
+                    title={name}
+                    onclick={() => { settings.accentColor = name; saveSettings(); }}
                   ></button>
                 {/each}
               </div>
@@ -726,13 +709,7 @@
     padding: 16px;
   }
 
-  .placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: var(--color-text-tertiary);
-  }
+
 
   /* Console View - Raptor Style */
   .console-view {

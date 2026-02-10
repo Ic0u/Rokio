@@ -146,7 +146,7 @@ async fn get_game_thumbnail(universe_id: u64) -> Result<String, String> {
 /// Get game icons for multiple universe IDs in batch
 #[tauri::command]
 pub async fn batch_get_game_icons(universe_ids: Vec<u64>) -> Result<std::collections::HashMap<u64, String>, String> {
-    println!("Fetching icons for {} games...", universe_ids.len());
+
     let ids_str = universe_ids.iter().map(|id| id.to_string()).collect::<Vec<_>>().join(",");
     let url = format!(
         "https://thumbnails.roblox.com/v1/games/icons?universeIds={}&size=420x420&format=Png",
@@ -265,7 +265,7 @@ pub struct PopularGame {
 /// Get popular games with thumbnails
 #[tauri::command]
 pub async fn get_popular_games() -> Result<Vec<PopularGame>, String> {
-    println!("get_popular_games called");
+
     // Use curated popular games list (Roblox's games list API is complex and undocumented)
     let games = vec![
         // Roleplay & Life Sim

@@ -97,6 +97,35 @@ Download the latest binary for your platform from the [Releases](https://github.
 | macOS    | `.dmg`        | Yes         |
 | Linux    | `.deb`        | Yes         |
 
+## Building from Source
+
+### Quick Build
+```bash
+# Build frontend + Tauri application
+npm run build && npm run tauri build
+```
+
+### Cross-Platform Release (GitHub Actions)
+This project supports automated cross-platform builds via GitHub Actions. Simply create a git tag to trigger a release:
+
+```bash
+# Create and push a release tag
+git tag v1.1.0-alpha
+git push origin v1.1.0-alpha
+```
+
+Or use the automated release script:
+```bash
+./scripts/release.sh 1.1.0-alpha
+```
+
+This will automatically build binaries for:
+- **macOS** (Universal: Intel + Apple Silicon)
+- **Windows** (`.msi` + `.exe`)
+- **Linux** (`.deb` + `.AppImage`)
+
+📖 **For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)**
+
 ## Development
 
 ### 1. Prerequisites

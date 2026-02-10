@@ -383,7 +383,7 @@
     gap: 16px;
   }
 
-  .icon-muted { opacity: 0.2; }
+
 
   :global(.spin) { animation: spin 1s linear infinite; }
 </style>
