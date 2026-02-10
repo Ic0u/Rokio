@@ -20,30 +20,44 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # macOS Universal (Apple Silicon + Intel)
+          # ═══════════════════════════════════════
+          # macOS (3 variants)
+          # ═══════════════════════════════════════
           - platform: macos-latest
             args: --target universal-apple-darwin
             rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+            label: macOS Universal
 
-          # macOS Apple Silicon only
           - platform: macos-latest
             args: --target aarch64-apple-darwin
             rust_targets: aarch64-apple-darwin
+            label: macOS ARM64
 
-          # macOS Intel only
           - platform: macos-latest
             args: --target x86_64-apple-darwin
             rust_targets: x86_64-apple-darwin
+            label: macOS x64
 
-          # Windows x64
+          # ═══════════════════════════════════════
+          # Windows (1 variant — NSIS handles System + User)
+          # ═══════════════════════════════════════
           - platform: windows-latest
             args: ""
             rust_targets: ""
+            label: Windows x64
 
-          # Linux amd64
+          # ═══════════════════════════════════════
+          # Linux (2 variants — x64 + ARM64)
+          # ═══════════════════════════════════════
           - platform: ubuntu-24.04
             args: ""
             rust_targets: ""
+            label: Linux x64
+
+          - platform: ubuntu-24.04-arm
+            args: ""
+            rust_targets: ""
+            label: Linux ARM64
 
     runs-on: ${{ matrix.platform }}
 
@@ -60,10 +74,10 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
-          shared-key: ${{ matrix.platform }}-${{ matrix.args }}
+          shared-key: ${{ matrix.label }}
 
       - name: Install Linux dependencies
-        if: matrix.platform == 'ubuntu-24.04'
+        if: contains(matrix.platform, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf lld
@@ -91,19 +105,31 @@ jobs:
 
             ## 📦 Downloads
 
-            | Platform | Recommended | Alternative |
-            |----------|-------------|-------------|
-            | **macOS (Universal)** | `.dmg` | `.app.tar.gz` |
-            | **macOS (Apple Silicon)** | `_aarch64.dmg` | `.app.tar.gz` |
-            | **macOS (Intel)** | `_x64.dmg` | `.app.tar.gz` |
-            | **Windows** | `_x64-setup.exe` | `.msi` |
-            | **Linux** | `.AppImage` | `.deb` |
+            ### 🍎 macOS
+            | Variant | File |
+            |---------|------|
+            | Mac (Universal) | `.dmg` |
+            | Mac (Apple Silicon) | `_aarch64.dmg` |
+            | Mac (Intel) | `_x64.dmg` |
 
-            > 💡 `.sig` files are for auto-updater verification.
+            ### 🪟 Windows
+            | Variant | File |
+            |---------|------|
+            | Windows (x64) Setup | `_x64-setup.exe` |
+            | Windows (x64) MSI | `_x64_en-US.msi` |
+
+            ### 🐧 Linux
+            | Variant | File |
+            |---------|------|
+            | Linux .deb (x64) | `_amd64.deb` |
+            | Linux .deb (ARM64) | `_arm64.deb` |
+            | Linux AppImage (x64) | `_amd64.AppImage` |
+            | Linux AppImage (ARM64) | `_arm64.AppImage` |
+            | Linux RPM (x64) | `_x86_64.rpm` |
+            | Linux RPM (ARM64) | `_aarch64.rpm` |
 
             ---
-            **Built with** Tauri 2.x + SvelteKit + Rust
-            **Author:** Nam Nguyễn
+            **Built with** Tauri 2.x + SvelteKit + Rust · **Author:** Nam Nguyễn
           releaseDraft: true
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
           args: ${{ matrix.args }}

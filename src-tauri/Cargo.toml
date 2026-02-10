@@ -112,7 +112,11 @@ rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/ld"]
 [target.x86_64-pc-windows-msvc]
 rustflags = ["-C", "link-arg=/INCREMENTAL:NO", "-C", "target-feature=+crt-static"]
 
-# Linux: LLD linker (if available in CI)
+# Linux x64: LLD linker (faster in CI)
 [target.x86_64-unknown-linux-gnu]
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+# Linux ARM64: LLD linker (ubuntu-24.04-arm runner)
+[target.aarch64-unknown-linux-gnu]
 rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 
