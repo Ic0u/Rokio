@@ -112,13 +112,15 @@ pub fn launch_roblox_menu() -> Result<u32, String> {
 
 #[cfg(target_os = "windows")]
 pub fn launch_roblox_menu() -> Result<u32, String> {
-    // Try to launch via roblox:// protocol without parameters
-    let child = Command::new("cmd")
+    let before_pids = find_roblox_pids();
+
+    Command::new("cmd")
         .args(["/C", "start", "", "roblox://"])
         .spawn()
         .map_err(|e| format!("Failed to open Roblox: {}", e))?;
 
-    Ok(child.id())
+    std::thread::sleep(std::time::Duration::from_millis(2000));
+    find_new_roblox_pid(&before_pids)
 }
 
 #[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
@@ -187,20 +189,6 @@ fn find_new_roblox_pid(before_pids: &[u32]) -> Result<u32, String> {
         .into_iter()
         .max()
         .ok_or_else(|| "Failed to find Roblox process. Is Roblox installed?".to_string())
-}
-
-/// Launch Roblox via deep link on Windows
-#[cfg(target_os = "windows")]
-pub fn launch_roblox_menu() -> Result<u32, String> {
-    let before_pids = find_roblox_pids();
-    
-    Command::new("cmd")
-        .args(["/C", "start", "", "roblox://"])
-        .spawn()
-        .map_err(|e| format!("Failed to open Roblox: {}", e))?;
-
-    std::thread::sleep(std::time::Duration::from_millis(2000));
-    find_new_roblox_pid(&before_pids)
 }
 
 #[cfg(target_os = "windows")]

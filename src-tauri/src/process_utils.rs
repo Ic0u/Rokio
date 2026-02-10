@@ -15,16 +15,10 @@
 pub mod windows {
     use std::ffi::OsString;
     use std::os::windows::ffi::OsStringExt;
-    use std::ptr::null_mut;
-    use windows_sys::Win32::Foundation::{
-        CloseHandle, BOOL, FALSE, HANDLE, INVALID_HANDLE_VALUE, STATUS_INFO_LENGTH_MISMATCH,
-    };
+    use windows_sys::Win32::Foundation::{CloseHandle, FALSE, INVALID_HANDLE_VALUE};
     use windows_sys::Win32::System::Diagnostics::ToolHelp::{
         CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, PROCESSENTRY32W,
         TH32CS_SNAPPROCESS,
-    };
-    use windows_sys::Win32::System::Threading::{
-        OpenProcess, PROCESS_DUP_HANDLE, PROCESS_QUERY_INFORMATION,
     };
 
     const MUTEX_NAME: &str = "ROBLOX_singletonMutex";
@@ -170,7 +164,7 @@ pub mod windows {
 
         unsafe {
             let handle = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
-            if handle == 0 {
+            if handle.is_null() {
                 return Err(format!("Failed to open process {} for termination", pid));
             }
 
@@ -188,12 +182,14 @@ pub mod windows {
     /// Check if a process is still running
     pub fn is_process_running(pid: u32) -> bool {
         use windows_sys::Win32::System::Threading::{
-            GetExitCodeProcess, OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION, STILL_ACTIVE,
+            GetExitCodeProcess, OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION,
         };
+        // STILL_ACTIVE = 259 (STATUS_PENDING), not exported by all windows-sys versions
+        const STILL_ACTIVE: u32 = 259;
 
         unsafe {
             let handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
-            if handle == 0 {
+            if handle.is_null() {
                 return false;
             }
 
