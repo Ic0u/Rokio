@@ -8,7 +8,7 @@ use crate::vault::{load_accounts, save_accounts};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::process::Command;
-#[cfg(target_os = "macos")]
+#[cfg(not(target_os = "windows"))]
 use std::process::Stdio;
 use std::sync::Mutex;
 use tauri::Manager;
