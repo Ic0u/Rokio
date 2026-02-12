@@ -21,7 +21,9 @@ The next-generation Roblox account manager built for power users.
 
 ## Preview
 
+![Rokio Profile Manager](static/account-preview.jpg)
 ![Rokio Server Browser](static/server_browser_preview.png)
+![Rokio Option](static/setting-preview.jpg)
 
 ## Introduction
 
